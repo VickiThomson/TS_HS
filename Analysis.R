@@ -164,6 +164,7 @@ label2_Fabien <- paste('Slope = ', round(Fabien_Car_LM$regression.results$Slope[
 label3_Fabien <- paste('Slope = ', round(Fabien_Main_LM$regression.results$Slope[[1]], digits = 3), sep = "")
 label4_Fabien <- paste('Slope = ', round(Fabien_Reev_LM$regression.results$Slope[[1]], digits = 3), sep = "")
 
+
 # Plotting head size vs body size
 pdf('Fabien_Geomean_SVL_interaction_LM.pdf')
 ggplot(Snakes_Fabien_all,aes(y=LogGeoMean,x=LogSVL,color=Locality))+ scale_color_manual(values=c("#8DD3C7", "#FB8072", "#E69F00", "#999999"))+
