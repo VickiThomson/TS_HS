@@ -40,23 +40,24 @@ Snakes_Fabien_Reevesby <- droplevels(Snakes_Fabien[Snakes_Fabien$Locality == "Re
 Snakes_Fabien_Carnac <- droplevels(Snakes_Fabien[Snakes_Fabien$Locality == "Carnac Island (WA)",])
 Snakes_Fabien_WAM <- droplevels(Snakes_Fabien[Snakes_Fabien$Locality == "WA mainland",])
 
-Snakes_Fabien_Williams_Adult <- Snakes_Fabien_Williams[Snakes_Fabien_Williams$Age == "A",]
-Snakes_Fabien_Williams_Juvenile <- Snakes_Fabien_Williams[Snakes_Fabien_Williams$Age == "J",]
-Snakes_Fabien_Reevesby_Adult <- Snakes_Fabien_Reevesby[Snakes_Fabien_Reevesby$Age == "A",]
-Snakes_Fabien_Reevesby_Juvenile <- Snakes_Fabien_Reevesby[Snakes_Fabien_Reevesby$Age == "J",]
-Snakes_Fabien_Carnac_Adult <- Snakes_Fabien_Carnac[Snakes_Fabien_Carnac$Age == "A",]
-Snakes_Fabien_Carnac_Juvenile <- Snakes_Fabien_Carnac[Snakes_Fabien_Carnac$Age == "J",]
-Snakes_Fabien_WAM_Adult <- Snakes_Fabien_WAM[Snakes_Fabien_WAM$Age == "A",]
-Snakes_Fabien_WAM_Juvenile <- Snakes_Fabien_WAM[Snakes_Fabien_WAM$Age == "J",]
+Snakes_Fabien_Williams_Adult <- Snakes_Fabien_Williams[Snakes_Fabien_Williams$Age == "A",] # n = 36
+Snakes_Fabien_Williams_Juvenile <- Snakes_Fabien_Williams[Snakes_Fabien_Williams$Age == "J",] # n = 57
+Snakes_Fabien_Reevesby_Adult <- Snakes_Fabien_Reevesby[Snakes_Fabien_Reevesby$Age == "A",] # n = 36
+Snakes_Fabien_Reevesby_Juvenile <- Snakes_Fabien_Reevesby[Snakes_Fabien_Reevesby$Age == "J",] # n = 15
+Snakes_Fabien_Carnac_Adult <- Snakes_Fabien_Carnac[Snakes_Fabien_Carnac$Age == "A",] # n = 78
+Snakes_Fabien_Carnac_Juvenile <- Snakes_Fabien_Carnac[Snakes_Fabien_Carnac$Age == "J",] # n = 242
+Snakes_Fabien_WAM_Adult <- Snakes_Fabien_WAM[Snakes_Fabien_WAM$Age == "A",] # n = 133
+Snakes_Fabien_WAM_Juvenile <- Snakes_Fabien_WAM[Snakes_Fabien_WAM$Age == "J",] # n = 281
 
-Snakes_Fabien_Adult <- rbind(Snakes_Fabien_Williams_Adult, Snakes_Fabien_Reevesby_Adult, Snakes_Fabien_Carnac_Adult, Snakes_Fabien_WAM_Adult)
-Snakes_Fabien_Juvenile <- rbind(Snakes_Fabien_Williams_Juvenile, Snakes_Fabien_Reevesby_Juvenile, Snakes_Fabien_Carnac_Juvenile, Snakes_Fabien_WAM_Juvenile)
+Snakes_Fabien_Adult <- rbind(Snakes_Fabien_WAM_Adult, Snakes_Fabien_Carnac_Adult, Snakes_Fabien_Reevesby_Adult, Snakes_Fabien_Williams_Adult)
+Snakes_Fabien_Juvenile <- rbind(Snakes_Fabien_WAM_Juvenile, Snakes_Fabien_Carnac_Juvenile, Snakes_Fabien_Reevesby_Juvenile, Snakes_Fabien_Williams_Juvenile)
 
-Snakes_Fabien_all <- rbind(Snakes_Fabien_Adult, Snakes_Fabien_Juvenile)
+Snakes_Fabien_all <- rbind(Snakes_Fabien_Juvenile,Snakes_Fabien_Adult)
+Snakes_Fabien_all$Age <- factor(Snakes_Fabien_all$Age, levels = c("J","A"))
 
 pdf('Dataset2_SVL_all.pdf')
 par(mar=c(10.1,4.1,4.1,2.1))
-boxplot(Snakes_Fabien_all$SVL~Snakes_Fabien_all$Locality* Snakes_Fabien_all$Age, las = 3)
+boxplot(Snakes_Fabien_all$SVL~Snakes_Fabien_all$Locality*Snakes_Fabien_all$Age, las = 3)
 dev.off()
 
 ### T-tests of differences in measurements between populations
@@ -202,7 +203,7 @@ Anton_Adult_all <- rbind(Snakes_Anton_SAM_Adult, Snakes_Anton_Reev_Adult, Snakes
 Anton_Juvenile_all <- rbind(Snakes_Anton_SAM_Juvenile, Snakes_Anton_Kang_Juvenile)
 Anton_Neonate_all <- rbind(Snakes_Anton_Reev_Neonate, Snakes_Anton_Kang_Neonate)
 Snakes_Anton_all <- rbind(Anton_Neonate_all, Anton_Juvenile_all, Anton_Adult_all)
-Snakes_Anton_all$Locality <- with(Age, Snakes_Anton_all$Locality),]
+Snakes_Anton_all$Locality <- factor(Snakes_Anton_all$Locality, levels = c("SA mainland","Reevesby Island (SA)","Kangaroo Island (SA)"))
 
 ### T-tests of differences in measurements between populations
 Anton_Adult_MK <- rbind(Snakes_Anton_SAM_Adult, Snakes_Anton_Kang_Adult)
@@ -239,12 +240,6 @@ t.test(Anton_Neonate_RK$LSR_R2 ~ Anton_Neonate_RK$Locality) # p-value = 0.002229
 t.test(Anton_Neonate_RK$LSR_R4 ~ Anton_Neonate_RK$Locality) # p-value = 0.001088
 t.test(Anton_Neonate_RK$LSR_R5 ~ Anton_Neonate_RK$Locality) # p-value = 0.1412
 t.test(Anton_Neonate_RK$SVL ~ Anton_Neonate_RK$Locality) # p-value = 1.578e-13
-
-
-pdf('Boxplot_SVL_Anton_adult.pdf')
-boxplot(Anton_Adult_all$SVL ~ Anton_Adult_all$Locality, ylab = "Body size (SVL in mm)", main = 'Body size for adult tiger snakes using Dataset 1', las = 3, xlab = "", ylim=c(0, max(Anton_Adult_all$SVL)*1.1))
-dev.off()
-
 
 pdf('Dataset1_SVL_all.pdf')
 par(mar=c(10.1,4.1,4.1,2.1))
