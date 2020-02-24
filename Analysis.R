@@ -57,7 +57,7 @@ Snakes_Fabien_all$Age <- factor(Snakes_Fabien_all$Age, levels = c("J","A"))
 
 pdf('Dataset2_SVL_all.pdf')
 par(mar=c(10.1,4.1,4.1,2.1))
-boxplot(Snakes_Fabien_all$SVL~Snakes_Fabien_all$Locality*Snakes_Fabien_all$Age, las = 3)
+boxplot(Snakes_Fabien_all$SVL~Snakes_Fabien_all$Locality*Snakes_Fabien_all$Age, las = 3, ylab = "Body size (SVL)", xlab = "", main = "Body size for each size class and population")
 dev.off()
 
 ### T-tests of differences in measurements between populations
@@ -167,17 +167,17 @@ label4_Fabien <- paste('Slope = ', round(Fabien_Reev_LM$regression.results$Slope
 
 # Plotting head size vs body size
 pdf('Fabien_Geomean_SVL_interaction_LM.pdf')
-ggplot(Snakes_Fabien_all,aes(y=LogGeoMean,x=LogSVL,color=Locality))+ scale_color_manual(values=c("#8DD3C7", "#FB8072", "#E69F00", "#999999"))+
+ggplot(Snakes_Fabien_all,aes(y=LogGeoMean,x=LogSVL,color=Locality))+ scale_color_manual(values=c("#999999", "#FB8072", "#E69F00", "#8DD3C7"))+
   geom_point(shape=1)+
   stat_function(fun=equation_William_LM,geom="line",size=1, xlim=c(Will_min, Will_max), color="#8DD3C7")+
-  annotate(geom = "text", x=2.175, y=1.3, label=label1_Fabien,color="#8DD3C7")+
-  stat_function(fun=equation_Carnac_LM,geom="line",size=1, xlim=c(Car_min, Car_max), color="#E69F00")+
-  annotate(geom = "text", x=3, y=1, label=label2_Fabien,color="#E69F00")+
+  annotate(geom = "text", x=2.75, y=1.4, label=label1_Fabien,color="#8DD3C7")+
+  stat_function(fun=equation_Carnac_LM,geom="line",size=1, xlim=c(Car_min, Car_max), color="#FB8072")+
+  annotate(geom = "text", x=3, y=1, label=label2_Fabien,color="#FB8072")+
   stat_function(fun=equation_WAMainland_LM,geom="line",size=1, xlim=c(WAMain_min, WAMain_max), color="#999999")+
   annotate(geom = "text", x=3, y=1.1, label=label3_Fabien,color="#999999")+
-  stat_function(fun=equation_Reevesby_LM,geom="line",size=1, xlim=c(Reev_min, Reev_max), color="#FB8072")+
-  annotate(geom = "text", x=2.25, y=1.1, label=label4_Fabien,color="#FB8072")+
-  ggtitle('Head size vs. body size for adult and juvenile Tiger Snakes \nusing Dataset 2')+
+  stat_function(fun=equation_Reevesby_LM,geom="line",size=1, xlim=c(Reev_min, Reev_max), color="#E69F00")+
+  annotate(geom = "text", x=2.25, y=1.1, label=label4_Fabien,color="#E69F00")+
+  ggtitle('Head size vs. body size for adult and juvenile \nTiger Snakes using Dataset 2')+
   theme(plot.title = element_text(hjust = 0.5))+
   xlab("Log (Body size)") + ylab("Log (Head size)")
 #  geom_abline(slope = 0.1, intercept = 5, color = "black")
@@ -244,9 +244,57 @@ t.test(Anton_Neonate_RK$SVL ~ Anton_Neonate_RK$Locality) # p-value = 1.578e-13
 
 pdf('Dataset1_SVL_all.pdf')
 par(mar=c(10.1,4.1,4.1,2.1))
-boxplot(Snakes_Anton_all$SVL~Snakes_Anton_all$Locality*Snakes_Anton_all$Age, las = 3)
+boxplot(Snakes_Anton_all$SVL~Snakes_Anton_all$Locality*Snakes_Anton_all$Age, las = 3, ylab = "Body size (SVL)", xlab = "", main = "Body size for each size class and population")
 dev.off()
 
+### Using lmodel2 package to allow for error in measuring both the x and y of GeoMean vs SVL
+# Calculating min and max of log(SVL) for each population to start and stop regression line
+Kang_min <- min(Snakes_Anton_Kang$LogSVL)
+Kang_max <- max(Snakes_Anton_Kang$LogSVL)
+Reev_min <- min(Snakes_Anton_Reev$LogSVL, na.rm = TRUE)
+Reev_max <- max(Snakes_Anton_Reev$LogSVL, na.rm = TRUE)
+SAMain_min <- min(Snakes_Anton_SAM$LogSVL, na.rm = TRUE)
+SAMain_max <- max(Snakes_Anton_SAM$LogSVL, na.rm = TRUE)
+
+# lmodel2 regression between log(head size) and log(body size)
+Anton_Kang_LM <- lmodel2(LogGeoMean ~ LogSVL, data = Snakes_Anton_Kang, nperm = 10000)
+Anton_Main_LM <- lmodel2(LogGeoMean ~ LogSVL, data = Snakes_Anton_SAM, nperm = 10000)
+Anton_Reev_LM <- lmodel2(LogGeoMean ~ LogSVL, data = Snakes_Anton_Reev, nperm = 10000)
+
+# Slope and intercept for each equation from lmodel2
+Anton_Kang_LM$regression.results$Slope[[1]]
+Anton_Main_LM$regression.results$Slope[[1]]
+Anton_Reev_LM$regression.results$Slope[[1]]
+Anton_Kang_LM$regression.results$Intercept[[1]]
+Anton_Main_LM$regression.results$Intercept[[1]]
+Anton_Reev_LM$regression.results$Intercept[[1]]
+
+# Equation of lines to be plotted
+equation_Ant_Kangaroo_LM <- function(x){Anton_Kang_LM$regression.results$Slope[[1]]*x+Anton_Kang_LM$regression.results$Intercept[[1]]}
+equation_Ant_SAMainland_LM <- function(x){Anton_Main_LM$regression.results$Slope[[1]]*x+Anton_Main_LM$regression.results$Intercept[[1]]}
+equation_Ant_Reevesby_LM <- function(x){Anton_Reev_LM$regression.results$Slope[[1]]*x+Anton_Reev_LM$regression.results$Intercept[[1]]}
+
+# Text labels for plot
+label1_Anton <- paste('Slope = ', round(Anton_Kang_LM$regression.results$Slope[[1]], digits = 3), sep = "")
+label2_Anton <- paste('Slope = ', round(Anton_Reev_LM$regression.results$Slope[[1]], digits = 3), sep = "")
+label3_Anton <- paste('Slope = ', round(Anton_Main_LM$regression.results$Slope[[1]], digits = 3), sep = "")
+
+
+# Plotting head size vs body size
+pdf('Anton_Geomean_SVL_interaction_LM.pdf')
+ggplot(Snakes_Anton_all,aes(y=LogGeoMean,x=LogSVL,color=Locality))+ scale_color_manual(values=c("#999999","#E69F00","#56B4E9"))+
+  geom_point(shape=1)+
+  stat_function(fun=equation_Ant_Kangaroo_LM,geom="line",size=1, xlim=c(Kang_min, Kang_max), color="#56B4E9")+
+  annotate(geom = "text", x=2.8, y=1.4, label=label1_Anton,color="#56B4E9")+
+  stat_function(fun=equation_Ant_SAMainland_LM,geom="line",size=1, xlim=c(SAMain_min, SAMain_max), color="#999999")+
+  annotate(geom = "text", x=3, y=1.1, label=label3_Anton,color="#999999")+
+  stat_function(fun=equation_Ant_Reevesby_LM,geom="line",size=1, xlim=c(Reev_min, Reev_max), color="#E69F00")+
+  annotate(geom = "text", x=2.25, y=1.1, label=label2_Anton,color="#E69F00")+
+  ggtitle('Head size vs. body size for adult and juvenile \nTiger Snakes using Dataset 2')+
+  theme(plot.title = element_text(hjust = 0.5))+
+  xlab("Log (Body size)") + ylab("Log (Head size)")
+#  geom_abline(slope = 0.1, intercept = 5, color = "black")
+dev.off()
 
 
 
