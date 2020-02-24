@@ -29,11 +29,12 @@ library(lattice)
 library(ggiraphExtra)
 library(dplyr) # Definitely need this package
 library(forcats) # Definitely need this package
+library(ade4) # Definitely need this package
 
 setwd("/Users/vickithomson/Dropbox/2017_Tiger_Snake_head_shape/2019/Final/Final/GeoMean_2/Jan_2020/Feb_2020")
-Snakes<-read.delim("/Users/vickithomson/Dropbox/2017_Tiger_Snake_head_shape/2019/Final/Final/GeoMean_2/Jan_2020/Feb_2020/Data.csv", header=TRUE, ",") 
+Snakes<-read.delim("/Users/vickithomson/Dropbox/2017_Tiger_Snake_head_shape/2019/Final/Final/GeoMean_2/Jan_2020/Feb_2020/Data_revised.csv", header=TRUE, ",") 
 
-Snakes_Fabien <- subset(Snakes, Measurer == 'Fab')  # n = 944
+Snakes_Fabien <- subset(Snakes, Measurer == 'Fab')  # n = 974
 dim(Snakes_Fabien)
 Snakes_Fabien_Williams <- droplevels(Snakes_Fabien[Snakes_Fabien$Locality == "Williams Island (SA)",])
 Snakes_Fabien_Reevesby <- droplevels(Snakes_Fabien[Snakes_Fabien$Locality == "Reevesby Island (SA)",])
@@ -41,19 +42,23 @@ Snakes_Fabien_Carnac <- droplevels(Snakes_Fabien[Snakes_Fabien$Locality == "Carn
 Snakes_Fabien_WAM <- droplevels(Snakes_Fabien[Snakes_Fabien$Locality == "WA mainland",])
 
 Snakes_Fabien_Williams_Adult <- Snakes_Fabien_Williams[Snakes_Fabien_Williams$Age == "A",] # n = 36
-Snakes_Fabien_Williams_Juvenile <- Snakes_Fabien_Williams[Snakes_Fabien_Williams$Age == "J",] # n = 57
+Snakes_Fabien_Williams_Juvenile <- Snakes_Fabien_Williams[Snakes_Fabien_Williams$Age == "J",] # n = 8
+Snakes_Fabien_Williams_Neonate <- Snakes_Fabien_Williams[Snakes_Fabien_Williams$Age == "N",] # n = 49
 Snakes_Fabien_Reevesby_Adult <- Snakes_Fabien_Reevesby[Snakes_Fabien_Reevesby$Age == "A",] # n = 36
-Snakes_Fabien_Reevesby_Juvenile <- Snakes_Fabien_Reevesby[Snakes_Fabien_Reevesby$Age == "J",] # n = 15
-Snakes_Fabien_Carnac_Adult <- Snakes_Fabien_Carnac[Snakes_Fabien_Carnac$Age == "A",] # n = 78
-Snakes_Fabien_Carnac_Juvenile <- Snakes_Fabien_Carnac[Snakes_Fabien_Carnac$Age == "J",] # n = 242
-Snakes_Fabien_WAM_Adult <- Snakes_Fabien_WAM[Snakes_Fabien_WAM$Age == "A",] # n = 133
-Snakes_Fabien_WAM_Juvenile <- Snakes_Fabien_WAM[Snakes_Fabien_WAM$Age == "J",] # n = 281
+Snakes_Fabien_Reevesby_Juvenile <- Snakes_Fabien_Reevesby[Snakes_Fabien_Reevesby$Age == "J",] # n = 6
+Snakes_Fabien_Reevesby_Neonate <- Snakes_Fabien_Reevesby[Snakes_Fabien_Reevesby$Age == "N",] # n = 9
+Snakes_Fabien_Carnac_Adult <- Snakes_Fabien_Carnac[Snakes_Fabien_Carnac$Age == "A",] # n = 85
+Snakes_Fabien_Carnac_Juvenile <- Snakes_Fabien_Carnac[Snakes_Fabien_Carnac$Age == "J",] # n = 0
+Snakes_Fabien_Carnac_Neonate <- Snakes_Fabien_Carnac[Snakes_Fabien_Carnac$Age == "N",] # n = 235
+Snakes_Fabien_WAM_Adult <- Snakes_Fabien_WAM[Snakes_Fabien_WAM$Age == "A",] # n = 134
+Snakes_Fabien_WAM_Juvenile <- Snakes_Fabien_WAM[Snakes_Fabien_WAM$Age == "J",] # n = 0
+Snakes_Fabien_WAM_Neonate <- Snakes_Fabien_WAM[Snakes_Fabien_WAM$Age == "N",] # n = 260
 
 Snakes_Fabien_Adult <- rbind(Snakes_Fabien_WAM_Adult, Snakes_Fabien_Carnac_Adult, Snakes_Fabien_Reevesby_Adult, Snakes_Fabien_Williams_Adult)
-Snakes_Fabien_Juvenile <- rbind(Snakes_Fabien_WAM_Juvenile, Snakes_Fabien_Carnac_Juvenile, Snakes_Fabien_Reevesby_Juvenile, Snakes_Fabien_Williams_Juvenile)
+Snakes_Fabien_Neonate <- rbind(Snakes_Fabien_WAM_Neonate, Snakes_Fabien_Carnac_Neonate, Snakes_Fabien_Reevesby_Neonate, Snakes_Fabien_Williams_Neonate)
 
-Snakes_Fabien_all <- rbind(Snakes_Fabien_Juvenile,Snakes_Fabien_Adult)
-Snakes_Fabien_all$Age <- factor(Snakes_Fabien_all$Age, levels = c("J","A"))
+Snakes_Fabien_all <- rbind(Snakes_Fabien_Neonate,Snakes_Fabien_Adult)
+Snakes_Fabien_all$Age <- factor(Snakes_Fabien_all$Age, levels = c("N","A"))
 
 pdf('Dataset2_SVL_all.pdf')
 par(mar=c(10.1,4.1,4.1,2.1))
@@ -78,18 +83,18 @@ t.test(SnakesFA_col_MR$SVL ~ SnakesFA_col_MR$Locality) # p-value = 1.061e-13
 t.test(SnakesFA_col_MR$GeoMean ~ SnakesFA_col_MR$Locality) # p-value = 8.705e-16
 
 SnakesFA_col_MC <- rbind(Snakes_Fabien_WAM_Adult, Snakes_Fabien_Carnac_Adult)
-t.test(SnakesFA_col_MC$LSR_R1 ~ SnakesFA_col_MC$Locality) # p-value = 1.045e-07
-t.test(SnakesFA_col_MC$LSR_R2 ~ SnakesFA_col_MC$Locality) # p-value = 0.2348
-t.test(SnakesFA_col_MC$LSR_R4 ~ SnakesFA_col_MC$Locality) # p-value = 0.006111
-t.test(SnakesFA_col_MC$LSR_R5 ~ SnakesFA_col_MC$Locality) # p-value = 0.1546
-t.test(SnakesFA_col_MC$SVL~ SnakesFA_col_MC$Locality) # p-value = 8.874e-15
-t.test(SnakesFA_col_MC$GeoMean~ SnakesFA_col_MC$Locality) # p-value = 7.878e-13
+t.test(SnakesFA_col_MC$LSR_R1 ~ SnakesFA_col_MC$Locality) # p-value = 6.173e-08
+t.test(SnakesFA_col_MC$LSR_R2 ~ SnakesFA_col_MC$Locality) # p-value = 0.08992
+t.test(SnakesFA_col_MC$LSR_R4 ~ SnakesFA_col_MC$Locality) # p-value = 0.004549
+t.test(SnakesFA_col_MC$LSR_R5 ~ SnakesFA_col_MC$Locality) # p-value = 0.09346
+t.test(SnakesFA_col_MC$SVL~ SnakesFA_col_MC$Locality) # p-value = 6.16e-11
+t.test(SnakesFA_col_MC$GeoMean~ SnakesFA_col_MC$Locality) # p-value = .423e-07
 
 SnakesFA_col_WC <- rbind(Snakes_Fabien_Williams_Adult, Snakes_Fabien_Carnac_Adult)
-t.test(SnakesFA_col_WC$LSR_R1 ~ SnakesFA_col_WC$Locality) # p-value = 0.00844
-t.test(SnakesFA_col_WC$LSR_R2 ~ SnakesFA_col_WC$Locality) # p-value = 0.0006076
-t.test(SnakesFA_col_WC$LSR_R4 ~ SnakesFA_col_WC$Locality) # p-value = 0.009926
-t.test(SnakesFA_col_WC$LSR_R5 ~ SnakesFA_col_WC$Locality) # p-value = 0.0143
+t.test(SnakesFA_col_WC$LSR_R1 ~ SnakesFA_col_WC$Locality) # p-value = 0.01012
+t.test(SnakesFA_col_WC$LSR_R2 ~ SnakesFA_col_WC$Locality) # p-value = 0.0001791
+t.test(SnakesFA_col_WC$LSR_R4 ~ SnakesFA_col_WC$Locality) # p-value = 0.008459
+t.test(SnakesFA_col_WC$LSR_R5 ~ SnakesFA_col_WC$Locality) # p-value = 0.007341
 t.test(SnakesFA_col_WC$SVL ~ SnakesFA_col_WC$Locality) # p-value < 2.2e-16
 t.test(SnakesFA_col_WC$GeoMean ~ SnakesFA_col_WC$Locality) # p-value < 2.2e-16
 
@@ -101,29 +106,29 @@ t.test(SnakesFA_col_WR$LSR_R5 ~ SnakesFA_col_WR$Locality) # p-value = 0.6881
 t.test(SnakesFA_col_WR$SVL ~ SnakesFA_col_WR$Locality) # p-value = 6.255e-06
 t.test(SnakesFA_col_WR$GeoMean ~ SnakesFA_col_WR$Locality) # p-value = 5.128e-13
 
-SnakesFJ_col_MW <- rbind(Snakes_Fabien_WAM_Juvenile, Snakes_Fabien_Williams_Juvenile)
-t.test(SnakesFJ_col_MW$LSR_R1 ~ SnakesFJ_col_MW$Locality) # p-value = 1.581e-07
-t.test(SnakesFJ_col_MW$LSR_R2 ~ SnakesFJ_col_MW$Locality) # p-value = 0.04866
-t.test(SnakesFJ_col_MW$LSR_R4 ~ SnakesFJ_col_MW$Locality) # p-value = 2.691e-14
-t.test(SnakesFJ_col_MW$LSR_R5 ~ SnakesFJ_col_MW$Locality) # p-value = 2.833e-05
-t.test(SnakesFJ_col_MW$SVL ~ SnakesFJ_col_MW$Locality) # p-value = 9.928e-05
-t.test(SnakesFJ_col_MW$GeoMean ~ SnakesFJ_col_MW$Locality) # p-value = 2.416e-07
+SnakesFN_col_MW <- rbind(Snakes_Fabien_WAM_Neonate, Snakes_Fabien_Williams_Neonate)
+t.test(SnakesFN_col_MW$LSR_R1 ~ SnakesFN_col_MW$Locality) # p-value = 6.945e-08
+t.test(SnakesFN_col_MW$LSR_R2 ~ SnakesFN_col_MW$Locality) # p-value = 0.1757
+t.test(SnakesFN_col_MW$LSR_R4 ~ SnakesFN_col_MW$Locality) # p-value = 3.761e-12
+t.test(SnakesFN_col_MW$LSR_R5 ~ SnakesFN_col_MW$Locality) # p-value = 8.76e-05
+t.test(SnakesFN_col_MW$SVL ~ SnakesFN_col_MW$Locality) # p-value < 2.2e-16
+t.test(SnakesFN_col_MW$GeoMean ~ SnakesFN_col_MW$Locality) # p-value < 2.2e-16
 
-SnakesFJ_col_MC <- rbind(Snakes_Fabien_WAM_Juvenile, Snakes_Fabien_Carnac_Juvenile)
-t.test(SnakesFJ_col_MC$LSR_R1 ~ SnakesFJ_col_MC$Locality) # p-value = 0.5309
-t.test(SnakesFJ_col_MC$LSR_R2 ~ SnakesFJ_col_MC$Locality) # p-value = 0.6204
-t.test(SnakesFJ_col_MC$LSR_R4 ~ SnakesFJ_col_MC$Locality) # p-value = 1.505e-07
-t.test(SnakesFJ_col_MC$LSR_R5 ~ SnakesFJ_col_MC$Locality) # p-value = 0.000609
-t.test(SnakesFJ_col_MC$SVL~ SnakesFJ_col_MC$Locality) # p-value = 0.01948
-t.test(SnakesFJ_col_MC$GeoMean~ SnakesFJ_col_MC$Locality) # p-value = 0.9907
+SnakesFN_col_MC <- rbind(Snakes_Fabien_WAM_Neonate, Snakes_Fabien_Carnac_Neonate)
+t.test(SnakesFN_col_MC$LSR_R1 ~ SnakesFN_col_MC$Locality) # p-value = 0.9481
+t.test(SnakesFN_col_MC$LSR_R2 ~ SnakesFN_col_MC$Locality) # p-value = 0.9156
+t.test(SnakesFN_col_MC$LSR_R4 ~ SnakesFN_col_MC$Locality) # p-value = 5.143e-07
+t.test(SnakesFN_col_MC$LSR_R5 ~ SnakesFN_col_MC$Locality) # p-value = 0.0007517
+t.test(SnakesFN_col_MC$SVL~ SnakesFN_col_MC$Locality) # p-value = 0.0006121
+t.test(SnakesFN_col_MC$GeoMean~ SnakesFN_col_MC$Locality) # p-value < 2.2e-16
 
-SnakesFJ_col_WC <- rbind(Snakes_Fabien_Williams_Juvenile, Snakes_Fabien_Carnac_Juvenile)
-t.test(SnakesFJ_col_WC$LSR_R1 ~ SnakesFJ_col_WC$Locality) # p-value = 1.446e-08
-t.test(SnakesFJ_col_WC$LSR_R2 ~ SnakesFJ_col_WC$Locality) # p-value = 0.01419
-t.test(SnakesFJ_col_WC$LSR_R4 ~ SnakesFJ_col_WC$Locality) # p-value = 4.706e-06
-t.test(SnakesFJ_col_WC$LSR_R5 ~ SnakesFJ_col_WC$Locality) # p-value = 0.1692
-t.test(SnakesFJ_col_WC$SVL ~ SnakesFJ_col_WC$Locality) # p-value = 7.343e-07
-t.test(SnakesFJ_col_WC$GeoMean ~ SnakesFJ_col_WC$Locality) # p-value = 1.117e-07
+SnakesFN_col_WC <- rbind(Snakes_Fabien_Williams_Neonate, Snakes_Fabien_Carnac_Neonate)
+t.test(SnakesFN_col_WC$LSR_R1 ~ SnakesFN_col_WC$Locality) # p-value = 1.844e-08
+t.test(SnakesFN_col_WC$LSR_R2 ~ SnakesFN_col_WC$Locality) # p-value = 0.1768
+t.test(SnakesFN_col_WC$LSR_R4 ~ SnakesFN_col_WC$Locality) # p-value = 2.823e-05
+t.test(SnakesFN_col_WC$LSR_R5 ~ SnakesFN_col_WC$Locality) # p-value = 0.1562
+t.test(SnakesFN_col_WC$SVL ~ SnakesFN_col_WC$Locality) # p-value < 2.2e-16
+t.test(SnakesFN_col_WC$GeoMean ~ SnakesFN_col_WC$Locality) # p-value < 2.2e-16
 
 ### Using lmodel2 package to allow for error in measuring both the x and y of GeoMean vs SVL
 # Calculating min and max of log(SVL) for each population to start and stop regression line
@@ -177,14 +182,14 @@ ggplot(Snakes_Fabien_all,aes(y=LogGeoMean,x=LogSVL,color=Locality))+ scale_color
   annotate(geom = "text", x=3, y=1.1, label=label3_Fabien,color="#999999")+
   stat_function(fun=equation_Reevesby_LM,geom="line",size=1, xlim=c(Reev_min, Reev_max), color="#E69F00")+
   annotate(geom = "text", x=2.25, y=1.1, label=label4_Fabien,color="#E69F00")+
-  ggtitle('Head size vs. body size for adult and juvenile \nTiger Snakes using Dataset 2')+
+  ggtitle('Head size vs. body size for adult and neonate \nTiger Snakes using Dataset 2')+
   theme(plot.title = element_text(hjust = 0.5))+
   xlab("Log (Body size)") + ylab("Log (Head size)")
 #  geom_abline(slope = 0.1, intercept = 5, color = "black")
 dev.off()
 
 ### Anton's dataset
-Snakes_Anton <- subset(Snakes, Measurer == 'An')  # n = 251
+Snakes_Anton <- subset(Snakes, Measurer == 'An')  # n = 386
 dim(Snakes_Anton)
 Snakes_Anton_Kang <- droplevels(Snakes_Anton[Snakes_Anton$Locality == "Kangaroo Island (SA)",])
 Snakes_Anton_Reev <- droplevels(Snakes_Anton[Snakes_Anton$Locality == "Reevesby Island (SA)",])
@@ -229,11 +234,11 @@ t.test(Anton_Adult_MR$LSR_R5 ~ Anton_Adult_MR$Locality) # p-value = 0.9763
 t.test(Anton_Adult_MR$SVL ~ Anton_Adult_MR$Locality) # p-value = 0.01495
 
 Anton_Juvenile_MK <- rbind(Snakes_Anton_SAM_Juvenile, Snakes_Anton_Kang_Juvenile)
-t.test(Anton_Juvenile_MK$LSR_R1 ~ Anton_Juvenile_MK$Locality) # p-value = 0.3338
-t.test(Anton_Juvenile_MK$LSR_R2 ~ Anton_Juvenile_MK$Locality) # p-value = 0.6769
-t.test(Anton_Juvenile_MK$LSR_R4 ~ Anton_Juvenile_MK$Locality) # p-value = 0.8597
-t.test(Anton_Juvenile_MK$LSR_R5 ~ Anton_Juvenile_MK$Locality) # p-value = 0.7141
-t.test(Anton_Juvenile_MK$SVL ~ Anton_Juvenile_MK$Locality) # p-value = 0.7779
+t.test(Anton_Juvenile_MK$LSR_R1 ~ Anton_Juvenile_MK$Locality) # p-value = 0.009554
+t.test(Anton_Juvenile_MK$LSR_R2 ~ Anton_Juvenile_MK$Locality) # p-value = 0.1189
+t.test(Anton_Juvenile_MK$LSR_R4 ~ Anton_Juvenile_MK$Locality) # p-value = 0.1096
+t.test(Anton_Juvenile_MK$LSR_R5 ~ Anton_Juvenile_MK$Locality) # p-value = 0.5052
+t.test(Anton_Juvenile_MK$SVL ~ Anton_Juvenile_MK$Locality) # p-value = 0.002338
 
 Anton_Neonate_RK <- rbind(Snakes_Anton_Reev_Neonate, Snakes_Anton_Kang_Neonate)
 t.test(Anton_Neonate_RK$LSR_R1 ~ Anton_Neonate_RK$Locality) # p-value = 0.4446
@@ -296,6 +301,203 @@ ggplot(Snakes_Anton_all,aes(y=LogGeoMean,x=LogSVL,color=Locality))+ scale_color_
 #  geom_abline(slope = 0.1, intercept = 5, color = "black")
 dev.off()
 
+### Head shape vs. Log GeoMean
+
+#### Other plots for both datasets
+Anton_Adult_all$Size <- "Adult"
+Anton_Neonate_all$Size <- "Neonate"
+Anton_all <- rbind(Anton_Adult_all, Anton_Neonate_all)
+Snakes_Fabien_Adult$Size <- "Adult"
+Snakes_Fabien_Neonate$Size <- "Neonate"
+Snakes_Fabien_all <- rbind(Snakes_Fabien_Adult, Snakes_Fabien_Neonate)
+
+Anton_imp <- Anton_all[,c(19,2,20,15,16,17,18,21)]
+colnames(Anton_imp) <- c("LogSVL", "Locality", "LogGeoMean", "LSR_R1", "LSR_R2","LSR_R4", "LSR_R5","Size")
+Fabien_imp <- Snakes_Fabien_all[,c(19,2,20,15,16,17,18,21)]
+colnames(Fabien_imp) <- c("LogSVL", "Locality", "LogGeoMean", "LSR_R1", "LSR_R2","LSR_R4", "LSR_R5", "Size")
+
+Anton_imp$State <- "SA"
+Fabien_imp$State <- "WA"
+Fabien_imp_WA <- Fabien_imp[Fabien_imp$Locality == "WA Mainland" | Fabien_imp$Locality == "Carnac Island (WA)",]
+SA_subset <- Fabien_imp[Fabien_imp$Locality == "Williams Island (SA)",]
+SA_subset$State <- "SA"
+Fabien_imp_new <- rbind(Fabien_imp_WA, SA_subset)
+
+both1 <- rbind(Anton_imp, Fabien_imp_new)
+both1_adult <- both1[both1$Size == "Adult",]
+both1_neonate <- both1[both1$Size == "Neonate",]
+
+#### Adults
+df_adult <- data.frame(both1_adult$LSR_R1, both1_adult$LSR_R2, both1_adult$LSR_R4, both1_adult$LSR_R5)
+gdf_adult_LSR <- dudi.pca(df_adult, scannf = FALSE, nf = 2)
+
+both1_adult$PC1 <- gdf_adult_LSR$li$Axis1
+
+both1_adult_Reev <- both1_adult[both1_adult$Locality == "Reevesby Island (SA)",]
+both1_adult_Kang <- both1_adult[both1_adult$Locality == "Kangaroo Island (SA)",]
+both1_adult_SAMain <- both1_adult[both1_adult$Locality == "SA mainland",]
+both1_adult_WAMain <- both1_adult[both1_adult$Locality == "WA mainland",]
+both1_adult_Carn <- both1_adult[both1_adult$Locality == "Carnac Island (WA)",]
+both1_adult_Will <- both1_adult[both1_adult$Locality == "Williams Island (SA)",]
+
+df_neonate <- data.frame(both1_neonate$LSR_R1, both1_neonate$LSR_R2, both1_neonate$LSR_R4, both1_neonate$LSR_R5)
+gdf_neonate_LSR <- dudi.pca(df_neonate, scannf = FALSE, nf = 2)
+
+both1_neonate$PC1 <- gdf_neonate_LSR$li$Axis1
+
+both1_neonate_Reev <- both1_neonate[both1_neonate$Locality == "Reevesby Island (SA)",]
+both1_neonate_Kang <- both1_neonate[both1_neonate$Locality == "Kangaroo Island (SA)",]
+both1_neonate_SAMain <- both1_neonate[both1_neonate$Locality == "SA mainland",]
+both1_neonate_WAMain <- both1_neonate[both1_neonate$Locality == "WA mainland",]
+both1_neonate_Carn <- both1_neonate[both1_neonate$Locality == "Carnac Island (WA)",]
+both1_neonate_Will <- both1_neonate[both1_neonate$Locality == "Williams Island (SA)",]
+
+
+Anton_Adult_Kang_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_adult_Kang, nperm = 10000)
+Anton_Adult_Reev_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_adult_Reev, nperm = 10000)
+Anton_Adult_Main_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_adult_SAMain, nperm = 10000)
+Anton_Neonate_Kang_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_neonate_Kang, nperm = 10000)
+Anton_Neonate_Reev_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_neonate_Reev, nperm = 10000)
+Fabien_Adult_Carnac_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_adult_Carn, nperm = 10000)
+Fabien_Adult_Will_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_adult_Will, nperm = 10000)
+Fabien_Adult_Main_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_adult_WAMain, nperm = 10000)
+Fabien_Neonate_Carnac_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_neonate_Carn, nperm = 10000)
+Fabien_Neonate_Will_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_neonate_Will, nperm = 10000)
+Fabien_Neonate_Main_LM_Geo_SVL <- lmodel2(PC1 ~ LogGeoMean, data = both1_neonate_WAMain, nperm = 10000)
+Anton_Adult_Kang_LM_Geo_SVL$regression.results$Slope[[1]]
+Anton_Adult_Reev_LM_Geo_SVL$regression.results$Slope[[1]]
+Anton_Adult_Main_LM_Geo_SVL$regression.results$Slope[[1]]
+Anton_Adult_Kang_LM_Geo_SVL$regression.results$Intercept[[1]]
+Anton_Adult_Reev_LM_Geo_SVL$regression.results$Intercept[[1]]
+Anton_Adult_Main_LM_Geo_SVL$regression.results$Intercept[[1]]
+Anton_Neonate_Kang_LM_Geo_SVL$regression.results$Slope[[1]]
+Anton_Neonate_Reev_LM_Geo_SVL$regression.results$Slope[[1]]
+Anton_Neonate_Kang_LM_Geo_SVL$regression.results$Intercept[[1]]
+Anton_Neonate_Reev_LM_Geo_SVL$regression.results$Intercept[[1]]
+Fabien_Adult_Carnac_LM_Geo_SVL$regression.results$Slope[[1]]
+Fabien_Adult_Will_LM_Geo_SVL$regression.results$Slope[[1]]
+Fabien_Adult_Main_LM_Geo_SVL$regression.results$Slope[[1]]
+Fabien_Neonate_Carnac_LM_Geo_SVL$regression.results$Slope[[1]]
+Fabien_Neonate_Will_LM_Geo_SVL$regression.results$Slope[[1]]
+Fabien_Neonate_Main_LM_Geo_SVL$regression.results$Slope[[1]]
+Fabien_Adult_Carnac_LM_Geo_SVL$regression.results$Intercept[[1]]
+Fabien_Adult_Will_LM_Geo_SVL$regression.results$Intercept[[1]]
+Fabien_Adult_Main_LM_Geo_SVL$regression.results$Intercept[[1]]
+Fabien_Neonate_Carnac_LM_Geo_SVL$regression.results$Intercept[[1]]
+Fabien_Neonate_Will_LM_Geo_SVL$regression.results$Intercept[[1]]
+Fabien_Neonate_Main_LM_Geo_SVL$regression.results$Intercept[[1]]
+
+
+equation_Adult_Kangaroo_LM_Geo_SVL <- function(x){Anton_Adult_Kang_LM_Geo_SVL$regression.results$Slope[[1]]*x+Anton_Adult_Kang_LM_Geo_SVL$regression.results$Intercept[[1]]}
+equation_Adult_Reevesby_LM_Geo_SVL <- function(x){Anton_Adult_Reev_LM_Geo_SVL$regression.results$Slope[[1]]*x+Anton_Adult_Reev_LM_Geo_SVL$regression.results$Intercept[[1]]}
+equation_Adult_SAMainland_LM_Geo_SVL <- function(x){Anton_Adult_Main_LM_Geo_SVL$regression.results$Slope[[1]]*x+Anton_Adult_Main_LM_Geo_SVL$regression.results$Intercept[[1]]}
+equation_Neonate_Kangaroo_LM_Geo_SVL <- function(x){Anton_Neonate_Kang_LM_Geo_SVL$regression.results$Slope[[1]]*x+Anton_Neonate_Kang_LM_Geo_SVL$regression.results$Intercept[[1]]}
+equation_Neonate_Reevesby_LM_Geo_SVL <- function(x){Anton_Neonate_Reev_LM_Geo_SVL$regression.results$Slope[[1]]*x+Anton_Neonate_Reev_LM_Geo_SVL$regression.results$Intercept[[1]]}
+equation_Adult_Carnac_LM_Geo_SVL <- function(x){Fabien_Adult_Carnac_LM_Geo_SVL$regression.results$Slope[[1]]*x+Fabien_Adult_Carnac_LM_Geo_SVL$regression.results$Intercept[[1]]}
+equation_Adult_Williams_LM_Geo_SVL <- function(x){Fabien_Adult_Will_LM_Geo_SVL$regression.results$Slope[[1]]*x+Fabien_Adult_Will_LM_Geo_SVL$regression.results$Intercept[[1]]}
+equation_Adult_WAMainland_LM_Geo_SVL <- function(x){Fabien_Adult_Main_LM_Geo_SVL$regression.results$Slope[[1]]*x+Fabien_Adult_Main_LM_Geo_SVL$regression.results$Intercept[[1]]}
+equation_Neonate_Carnac_LM_Geo_SVL <- function(x){Fabien_Neonate_Carnac_LM_Geo_SVL$regression.results$Slope[[1]]*x+Fabien_Neonate_Carnac_LM_Geo_SVL$regression.results$Intercept[[1]]}
+equation_Neonate_Williams_LM_Geo_SVL <- function(x){Fabien_Neonate_Will_LM_Geo_SVL$regression.results$Slope[[1]]*x+Fabien_Neonate_Will_LM_Geo_SVL$regression.results$Intercept[[1]]}
+equation_Neonate_WAMainland_LM_Geo_SVL <- function(x){Fabien_Neonate_Main_LM_Geo_SVL$regression.results$Slope[[1]]*x+Fabien_Neonate_Main_LM_Geo_SVL$regression.results$Intercept[[1]]}
+
+Kang_adult_min <- min(both1_adult_Kang$LogGeoMean)
+Kang_adult_max <- max(both1_adult_Kang$LogGeoMean)
+Reev_adult_min <- min(both1_adult_Reev$LogGeoMean)
+Reev_adult_max <- max(both1_adult_Reev$LogGeoMean)
+SAMain_adult_min <- min(both1_adult_SAMain$LogGeoMean)
+SAMain_adult_max <- max(both1_adult_SAMain$LogGeoMean)
+Carnac_adult_min <- min(both1_adult_Carn$LogGeoMean)
+Carnac_adult_max <- max(both1_adult_Carn$LogGeoMean)
+Will_adult_min <- min(both1_adult_Will$LogGeoMean)
+Will_adult_max <- max(both1_adult_Will$LogGeoMean)
+WAMain_adult_min <- min(both1_adult_WAMain$LogGeoMean)
+WAMain_adult_max <- max(both1_adult_WAMain$LogGeoMean)
+
+Kang_neonate_min <- min(both1_neonate_Kang$LogGeoMean)
+Kang_neonate_max <- max(both1_neonate_Kang$LogGeoMean)
+Reev_neonate_min <- min(both1_neonate_Reev$LogGeoMean)
+Reev_neonate_max <- max(both1_neonate_Reev$LogGeoMean)
+Carnac_neonate_min <- min(both1_neonate_Carn$LogGeoMean)
+Carnac_neonate_max <- max(both1_neonate_Carn$LogGeoMean)
+Will_neonate_min <- min(both1_neonate_Will$LogGeoMean)
+Will_neonate_max <- max(both1_neonate_Will$LogGeoMean)
+WAMain_neonate_min <- min(both1_neonate_WAMain$LogGeoMean)
+WAMain_neonate_max <- max(both1_neonate_WAMain$LogGeoMean)
+
+
+library(ade4)
+#### Adults
+both1_adult_SA <- both1_adult[both1_adult$State == "SA",]
+slope1 <- paste('Slope = ', round(Anton_Adult_Main_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+slope2 <- paste('Slope = ', round(Anton_Adult_Kang_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+slope3 <- paste('Slope = ', round(Anton_Adult_Reev_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+slope4 <- paste('Slope = ', round(Fabien_Adult_Will_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+
+pdf('Head_shape_vs_LogGeoMean_Adults_SA.pdf')
+ggplot(both1_adult_SA, aes(y=PC1,x=LogGeoMean, color = Locality))+scale_color_manual(values=c("#FB8072", "#56B4E9", "#999999", "#8DD3C7"))+
+  geom_point(shape=1)+
+  stat_function(fun=equation_Adult_Williams_LM_Geo_SVL,geom="line",size=1, xlim=c(Will_adult_min, Will_adult_max), color= "#8DD3C7")+
+  annotate(geom = "text", x=3, y=-0.15, label=slope4,color= "#8DD3C7")+
+  stat_function(fun=equation_Adult_Kangaroo_LM_Geo_SVL,geom="line",size=1, xlim=c(Kang_adult_min, Kang_adult_max), color="#FB8072")+
+  annotate(geom = "text", x=3.18, y=-0.9, label=slope2,color="#FB8072")+
+  stat_function(fun=equation_Adult_Reevesby_LM_Geo_SVL,geom="line",size=1, xlim=c(Reev_adult_min, Reev_adult_max), color="#56B4E9")+
+  annotate(geom = "text", x=2.8, y=-1.64, label=slope3,color="#56B4E9")+
+  stat_function(fun=equation_Adult_SAMainland_LM_Geo_SVL,geom="line",size=1, xlim=c(SAMain_adult_min, SAMain_adult_max), color="#999999")+
+  annotate(geom = "text", x=2.73, y=-0.75, label=slope1,color="#999999")+
+  ggtitle('Head shape versus head size for adult Tiger Snakes from SA')+
+  theme(plot.title = element_text(hjust = 0.5))+
+  xlab("Head size")+ylab("Head shape")
+dev.off()
+both1_adult_WA <- both1_adult[both1_adult$State == "WA",]
+slope1_FAB <- paste('Slope = ', round(Fabien_Adult_Main_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+slope2_FAB <- paste('Slope = ', round(Fabien_Adult_Carnac_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+
+pdf('Head_shape_vs_LogGeoMean_Adults_WA.pdf')
+ggplot(both1_adult_WA, aes(y=PC1,x=LogGeoMean, color = Locality))+scale_color_manual(values=c("#999999", "#E69F00"))+
+  geom_point(shape=1)+
+  stat_function(fun=equation_Adult_Carnac_LM_Geo_SVL,geom="line",size=1, xlim=c(Carnac_adult_min, Carnac_adult_max), color="#E69F00")+
+  annotate(geom = "text", x=2.97, y=0.15, label=slope2_FAB,color="#E69F00")+
+  stat_function(fun=equation_Adult_WAMainland_LM_Geo_SVL,geom="line",size=1, xlim=c(WAMain_adult_min, WAMain_adult_max), color="#999999")+
+  annotate(geom = "text", x=2.6, y=1.3, label=slope1_FAB,color="#999999")+
+  ggtitle('Head shape versus head size for adult Tiger Snakes from WA')+
+  theme(plot.title = element_text(hjust = 0.5))+
+  xlab("Head size")+ylab("Head shape")
+dev.off()
+
+### Neonates
+both1_neonate_SA <- both1_neonate[both1_neonate$State == "SA",]
+slope2_neo <- paste('Slope = ', round(Anton_Neonate_Kang_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+slope3_neo <- paste('Slope = ', round(Anton_Neonate_Reev_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+slope4_neo <- paste('Slope = ', round(Fabien_Neonate_Will_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+
+pdf('Head_shape_vs_LogGeoMean_Neonates_SA.pdf')
+ggplot(both1_neonate_SA, aes(y=PC1,x=LogGeoMean, color = Locality))+scale_color_manual(values=c("#FB8072", "#56B4E9", "#8DD3C7"))+
+  geom_point(shape=1)+
+  stat_function(fun=equation_Neonate_Williams_LM_Geo_SVL,geom="line",size=1, xlim=c(Will_neonate_min, Will_neonate_max), color="#8DD3C7")+
+  annotate(geom = "text", x=2.1, y=1.8, label=slope4_neo,color="#8DD3C7")+
+  stat_function(fun=equation_Neonate_Kangaroo_LM_Geo_SVL,geom="line",size=1, xlim=c(Kang_neonate_min, Kang_neonate_max), color="#FB8072")+
+  annotate(geom = "text", x=2.12, y=-1.3, label=slope2_neo,color="#FB8072")+
+  stat_function(fun=equation_Neonate_Reevesby_LM_Geo_SVL,geom="line",size=1, xlim=c(Reev_neonate_min, Reev_neonate_max), color="#56B4E9")+
+  annotate(geom = "text", x=1.87, y=-2, label=slope3_neo,color="#56B4E9")+
+  ggtitle('Head shape versus head size for neonate Tiger Snakes in SA')+
+  theme(plot.title = element_text(hjust = 0.5))+
+  xlab("Head size")+ylab("Head shape")
+dev.off()
+
+both1_neonate_WA <- both1_neonate[both1_neonate$State == "WA",]
+slope3_neo_FAB <- paste('Slope = ', round(Fabien_Neonate_Carnac_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+slope4_neo_FAB <- paste('Slope = ', round(Fabien_Neonate_Will_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
+pdf('Head_shape_vs_LogGeoMean_Neonates_WA.pdf')
+ggplot(both1_neonate_WA, aes(y=PC1,x=LogGeoMean, color = Locality))+scale_color_manual(values=c("#999999", "#E69F00"))+
+  geom_point(shape=1)+
+  stat_function(fun=equation_Neonate_Carnac_LM_Geo_SVL,geom="line",size=1, xlim=c(Carnac_neonate_min, Carnac_neonate_max), color="#E69F00")+
+  annotate(geom = "text", x=2.1, y=2.5, label=slope3_neo_FAB,color="#E69F00")+
+  stat_function(fun=equation_Neonate_WAMainland_LM_Geo_SVL,geom="line",size=1, xlim=c(WAMain_neonate_min, WAMain_neonate_max), color="#999999")+
+  annotate(geom = "text", x=1.8, y=3.5, label=slope4_neo_FAB,color="#999999")+
+  ggtitle('Head shape versus head size for neonate Tiger Snakes in WA')+
+  theme(plot.title = element_text(hjust = 0.5))+
+  xlab("Head size")+ylab("Head shape")
+dev.off()
 
 
 
