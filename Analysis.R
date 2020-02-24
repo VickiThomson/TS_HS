@@ -318,7 +318,7 @@ colnames(Fabien_imp) <- c("LogSVL", "Locality", "LogGeoMean", "LSR_R1", "LSR_R2"
 
 Anton_imp$State <- "SA"
 Fabien_imp$State <- "WA"
-Fabien_imp_WA <- Fabien_imp[Fabien_imp$Locality == "WA Mainland" | Fabien_imp$Locality == "Carnac Island (WA)",]
+Fabien_imp_WA <- Fabien_imp[Fabien_imp$Locality == "WA mainland" | Fabien_imp$Locality == "Carnac Island (WA)",]
 SA_subset <- Fabien_imp[Fabien_imp$Locality == "Williams Island (SA)",]
 SA_subset$State <- "SA"
 Fabien_imp_new <- rbind(Fabien_imp_WA, SA_subset)
@@ -425,7 +425,6 @@ WAMain_neonate_min <- min(both1_neonate_WAMain$LogGeoMean)
 WAMain_neonate_max <- max(both1_neonate_WAMain$LogGeoMean)
 
 
-library(ade4)
 #### Adults
 both1_adult_SA <- both1_adult[both1_adult$State == "SA",]
 slope1 <- paste('Slope = ', round(Anton_Adult_Main_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
@@ -434,16 +433,16 @@ slope3 <- paste('Slope = ', round(Anton_Adult_Reev_LM_Geo_SVL$regression.results
 slope4 <- paste('Slope = ', round(Fabien_Adult_Will_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
 
 pdf('Head_shape_vs_LogGeoMean_Adults_SA.pdf')
-ggplot(both1_adult_SA, aes(y=PC1,x=LogGeoMean, color = Locality))+scale_color_manual(values=c("#FB8072", "#56B4E9", "#999999", "#8DD3C7"))+
+ggplot(both1_adult_SA, aes(y=PC1,x=LogGeoMean, color = Locality))+scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9", "#8DD3C7"))+
   geom_point(shape=1)+
   stat_function(fun=equation_Adult_Williams_LM_Geo_SVL,geom="line",size=1, xlim=c(Will_adult_min, Will_adult_max), color= "#8DD3C7")+
-  annotate(geom = "text", x=3, y=-0.15, label=slope4,color= "#8DD3C7")+
-  stat_function(fun=equation_Adult_Kangaroo_LM_Geo_SVL,geom="line",size=1, xlim=c(Kang_adult_min, Kang_adult_max), color="#FB8072")+
-  annotate(geom = "text", x=3.18, y=-0.9, label=slope2,color="#FB8072")+
-  stat_function(fun=equation_Adult_Reevesby_LM_Geo_SVL,geom="line",size=1, xlim=c(Reev_adult_min, Reev_adult_max), color="#56B4E9")+
-  annotate(geom = "text", x=2.8, y=-1.64, label=slope3,color="#56B4E9")+
+  annotate(geom = "text", x=1.3, y=-1.5, label=slope4,color= "#8DD3C7")+
+  stat_function(fun=equation_Adult_Kangaroo_LM_Geo_SVL,geom="line",size=1, xlim=c(Kang_adult_min, Kang_adult_max), color="#56B4E9")+
+  annotate(geom = "text", x=1.3, y=2.5, label=slope2,color="#56B4E9")+
+  stat_function(fun=equation_Adult_Reevesby_LM_Geo_SVL,geom="line",size=1, xlim=c(Reev_adult_min, Reev_adult_max), color="#E69F00")+
+  annotate(geom = "text", x=1.2, y=2, label=slope3,color="#E69F00")+
   stat_function(fun=equation_Adult_SAMainland_LM_Geo_SVL,geom="line",size=1, xlim=c(SAMain_adult_min, SAMain_adult_max), color="#999999")+
-  annotate(geom = "text", x=2.73, y=-0.75, label=slope1,color="#999999")+
+  annotate(geom = "text", x=1.2, y=0, label=slope1,color="#999999")+
   ggtitle('Head shape versus head size for adult Tiger Snakes from SA')+
   theme(plot.title = element_text(hjust = 0.5))+
   xlab("Head size")+ylab("Head shape")
@@ -456,9 +455,9 @@ pdf('Head_shape_vs_LogGeoMean_Adults_WA.pdf')
 ggplot(both1_adult_WA, aes(y=PC1,x=LogGeoMean, color = Locality))+scale_color_manual(values=c("#999999", "#E69F00"))+
   geom_point(shape=1)+
   stat_function(fun=equation_Adult_Carnac_LM_Geo_SVL,geom="line",size=1, xlim=c(Carnac_adult_min, Carnac_adult_max), color="#E69F00")+
-  annotate(geom = "text", x=2.97, y=0.15, label=slope2_FAB,color="#E69F00")+
+  annotate(geom = "text", x=1.25, y=-2.5, label=slope2_FAB,color="#E69F00")+
   stat_function(fun=equation_Adult_WAMainland_LM_Geo_SVL,geom="line",size=1, xlim=c(WAMain_adult_min, WAMain_adult_max), color="#999999")+
-  annotate(geom = "text", x=2.6, y=1.3, label=slope1_FAB,color="#999999")+
+  annotate(geom = "text", x=1.25, y=1.3, label=slope1_FAB,color="#999999")+
   ggtitle('Head shape versus head size for adult Tiger Snakes from WA')+
   theme(plot.title = element_text(hjust = 0.5))+
   xlab("Head size")+ylab("Head shape")
@@ -471,14 +470,14 @@ slope3_neo <- paste('Slope = ', round(Anton_Neonate_Reev_LM_Geo_SVL$regression.r
 slope4_neo <- paste('Slope = ', round(Fabien_Neonate_Will_LM_Geo_SVL$regression.results$Slope[[1]], digits = 3), sep = "")
 
 pdf('Head_shape_vs_LogGeoMean_Neonates_SA.pdf')
-ggplot(both1_neonate_SA, aes(y=PC1,x=LogGeoMean, color = Locality))+scale_color_manual(values=c("#FB8072", "#56B4E9", "#8DD3C7"))+
+ggplot(both1_neonate_SA, aes(y=PC1,x=LogGeoMean, color = Locality))+scale_color_manual(values=c("#E69F00", "#56B4E9", "#8DD3C7"))+
   geom_point(shape=1)+
   stat_function(fun=equation_Neonate_Williams_LM_Geo_SVL,geom="line",size=1, xlim=c(Will_neonate_min, Will_neonate_max), color="#8DD3C7")+
-  annotate(geom = "text", x=2.1, y=1.8, label=slope4_neo,color="#8DD3C7")+
-  stat_function(fun=equation_Neonate_Kangaroo_LM_Geo_SVL,geom="line",size=1, xlim=c(Kang_neonate_min, Kang_neonate_max), color="#FB8072")+
-  annotate(geom = "text", x=2.12, y=-1.3, label=slope2_neo,color="#FB8072")+
-  stat_function(fun=equation_Neonate_Reevesby_LM_Geo_SVL,geom="line",size=1, xlim=c(Reev_neonate_min, Reev_neonate_max), color="#56B4E9")+
-  annotate(geom = "text", x=1.87, y=-2, label=slope3_neo,color="#56B4E9")+
+  annotate(geom = "text", x=0.92, y=-2, label=slope4_neo,color="#8DD3C7")+
+  stat_function(fun=equation_Neonate_Kangaroo_LM_Geo_SVL,geom="line",size=1, xlim=c(Kang_neonate_min, Kang_neonate_max), color="#56B4E9")+
+  annotate(geom = "text", x=0.93, y=2, label=slope2_neo,color="#56B4E9")+
+  stat_function(fun=equation_Neonate_Reevesby_LM_Geo_SVL,geom="line",size=1, xlim=c(Reev_neonate_min, Reev_neonate_max), color="#E69F00")+
+  annotate(geom = "text", x=0.82, y=3, label=slope3_neo,color="#E69F00")+
   ggtitle('Head shape versus head size for neonate Tiger Snakes in SA')+
   theme(plot.title = element_text(hjust = 0.5))+
   xlab("Head size")+ylab("Head shape")
@@ -491,9 +490,9 @@ pdf('Head_shape_vs_LogGeoMean_Neonates_WA.pdf')
 ggplot(both1_neonate_WA, aes(y=PC1,x=LogGeoMean, color = Locality))+scale_color_manual(values=c("#999999", "#E69F00"))+
   geom_point(shape=1)+
   stat_function(fun=equation_Neonate_Carnac_LM_Geo_SVL,geom="line",size=1, xlim=c(Carnac_neonate_min, Carnac_neonate_max), color="#E69F00")+
-  annotate(geom = "text", x=2.1, y=2.5, label=slope3_neo_FAB,color="#E69F00")+
+  annotate(geom = "text", x=0.8, y=1, label=slope3_neo_FAB,color="#E69F00")+
   stat_function(fun=equation_Neonate_WAMainland_LM_Geo_SVL,geom="line",size=1, xlim=c(WAMain_neonate_min, WAMain_neonate_max), color="#999999")+
-  annotate(geom = "text", x=1.8, y=3.5, label=slope4_neo_FAB,color="#999999")+
+  annotate(geom = "text", x=0.85, y=-5, label=slope4_neo_FAB,color="#999999")+
   ggtitle('Head shape versus head size for neonate Tiger Snakes in WA')+
   theme(plot.title = element_text(hjust = 0.5))+
   xlab("Head size")+ylab("Head shape")
